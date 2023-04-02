@@ -19,28 +19,6 @@ class Styles {
   static Color toastColor = Colors.black87;
   static Color alertColor = Colors.red[200]!;
 
-  //styles
-  static TextStyle headLine = TextStyle(
-    color: textColor,
-    fontSize: 20,
-  );
-  static TextStyle textStyle = TextStyle(
-    color: textColor,
-    fontSize: 18,
-  );
-  static TextStyle textStyle2 = TextStyle(
-    color: textColor,
-    fontSize: 16,
-  );
-  static TextStyle numStyle = TextStyle(
-    color: numColor,
-    fontSize: 18,
-  );
-  static TextStyle numStyle2 = TextStyle(
-    color: numColor,
-    fontSize: 16,
-  );
-
   //icons
   static IconData quitIcon = Icons.smoke_free_sharp;
   static IconData infoIcon = Icons.info_outline_rounded;
@@ -53,8 +31,9 @@ class Styles {
   static IconData gaugeIconF = FluentIcons.gauge_32_filled;
   static IconData heartIconR = FluentIcons.heart_pulse_32_regular;
   static IconData heartIconF = FluentIcons.heart_pulse_32_filled;
-  static IconData infoIconR =FluentIcons.book_information_24_regular;
-  static IconData infoIconF =FluentIcons.book_information_24_filled;
+  static IconData infoIconR = FluentIcons.book_information_24_regular;
+  static IconData infoIconF = FluentIcons.book_information_24_filled;
   static IconData settingIconR = FluentIcons.settings_32_regular;
   static IconData settingIconF = FluentIcons.settings_32_filled;
+  static IconData dotsIcon = Icons.more_vert_sharp;
 }

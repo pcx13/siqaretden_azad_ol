@@ -8,6 +8,8 @@ class Riskler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Styles.primaryColor,
@@ -15,13 +17,15 @@ class Riskler extends StatelessWidget {
         backgroundColor: Styles.boxColor,
         title: Texts.basliq2,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          InfoText(movzu: Texts.movzu2),
-          const SizedBox(height: 15),
-          InfoText(movzu: Texts.movzu21),
-        ],
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(mq.width * 0.042),
+        child: Column(
+          children: [
+            InfoText(movzu: Texts.movzu2),
+            SizedBox(height: mq.width * 0.042),
+            InfoText(movzu: Texts.movzu21),
+          ],
+        ),
       ),
     );
   }

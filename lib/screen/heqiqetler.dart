@@ -8,6 +8,8 @@ class Heqiqetler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Styles.primaryColor,
@@ -15,11 +17,9 @@ class Heqiqetler extends StatelessWidget {
         backgroundColor: Styles.boxColor,
         title: Texts.basliq1,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          InfoText(movzu: Texts.movzu1),
-        ],
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(mq.width * 0.042),
+        child: InfoText(movzu: Texts.movzu1),
       ),
     );
   }

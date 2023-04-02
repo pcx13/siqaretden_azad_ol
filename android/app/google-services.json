@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "720214460863",
+    "project_id": "project-3410878376362473690",
+    "storage_bucket": "project-3410878376362473690.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720214460863:android:54afe039a783151791790a",
+        "android_client_info": {
+          "package_name": "com.pcx.siqaretdenazadol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720214460863-2rdvp76e212t3jtssfeqrmcicife18da.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAPFcHm5f8MHZvfFr9Vp55nba5WEQawiXg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "720214460863-2rdvp76e212t3jtssfeqrmcicife18da.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

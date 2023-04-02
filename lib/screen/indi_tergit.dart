@@ -8,6 +8,8 @@ class IndiTergit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Styles.primaryColor,
@@ -15,23 +17,25 @@ class IndiTergit extends StatelessWidget {
         backgroundColor: Styles.boxColor,
         title: Texts.basliq4,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          InfoText(movzu: Texts.movzu4),
-          const SizedBox(height: 15),
-          InfoText(movzu: Texts.movzu41),
-          const SizedBox(height: 15),
-          InfoText(movzu: Texts.movzu42),
-          const SizedBox(height: 15),
-          InfoText(movzu: Texts.movzu43),
-          const SizedBox(height: 15),
-          InfoText(movzu: Texts.movzu44),
-          const SizedBox(height: 15),
-          InfoText(movzu: Texts.movzu45),
-          const SizedBox(height: 15),
-          InfoText(movzu: Texts.movzu46),
-        ],
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(mq.width * 0.042),
+        child: Column(
+          children: [
+            InfoText(movzu: Texts.movzu4),
+            SizedBox(height: mq.width * 0.042),
+            InfoText(movzu: Texts.movzu41),
+            SizedBox(height: mq.width * 0.042),
+            InfoText(movzu: Texts.movzu42),
+            SizedBox(height: mq.width * 0.042),
+            InfoText(movzu: Texts.movzu43),
+            SizedBox(height: mq.width * 0.042),
+            InfoText(movzu: Texts.movzu44),
+            SizedBox(height: mq.width * 0.042),
+            InfoText(movzu: Texts.movzu45),
+            SizedBox(height: mq.width * 0.042),
+            InfoText(movzu: Texts.movzu46),
+          ],
+        ),
       ),
     );
   }

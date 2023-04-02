@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:indi_tergit/data/my_box.dart';
 import 'package:indi_tergit/screen/bottom_bar.dart';
 import 'package:indi_tergit/utils/styles.dart';
+import 'package:intl/intl.dart';
 
 class Profile extends StatefulWidget {
   const Profile({Key? key}) : super(key: key);
@@ -21,6 +22,9 @@ class _ProfileState extends State<Profile> {
   String? value;
 
   DateTime? dateTime;
+  bool? isChecked;
+  final dateFormat1 = DateFormat('dd.MM.yyyy');
+  final dateFormat2 = DateFormat('HH:mm');
 
   @override
   void initState() {
@@ -30,10 +34,13 @@ class _ProfileState extends State<Profile> {
     qiymet = MyBox.getQiymet() ?? '';
     value = MyBox.getValyuta() ?? valyuta[0];
     dateTime = MyBox.getTarix() ?? DateTime.now();
+    isChecked = MyBox.getBildiris() ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Styles.primaryColor,
@@ -46,223 +53,356 @@ class _ProfileState extends State<Profile> {
             icon: Icon(Styles.resetIcon),
             tooltip: 'Sıfırla',
           ),
+          /*PopupMenuButton(
+            icon: Icon(
+              Styles.dotsIcon,
+              color: Styles.valColor,
+            ),
+            color: Styles.boxColor,
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: StatefulBuilder(
+                    builder: (BuildContext context, StateSetter setState) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          isChecked == false
+                              ? setState(() {
+                                  MyBox.setBildiris(true);
+                                  isChecked = true;
+                                })
+                              : isChecked == true
+                                  ? setState(() {
+                                      MyBox.setBildiris(false);
+                                      isChecked = false;
+                                    })
+                                  : null;
+                        },
+                        child: Text(
+                          'Bildirişlər',
+                          style: TextStyle(
+                            color: Styles.valColor,
+                            fontSize: mq.width * 0.045,
+                          ),
+                        ),
+                      ),
+                      Theme(
+                        data: ThemeData(
+                          primarySwatch: Styles.themeColor,
+                          unselectedWidgetColor: Styles.valColor,
+                        ),
+                        child: Checkbox(
+                            value: isChecked,
+                            onChanged: (onChanged) {
+                              isChecked == false
+                                  ? setState(() {
+                                      MyBox.setBildiris(true);
+                                      isChecked = onChanged!;
+                                    })
+                                  : isChecked == true
+                                      ? setState(() {
+                                          MyBox.setBildiris(false);
+                                          isChecked = onChanged!;
+                                        })
+                                      : null;
+                            }),
+                      ),
+                    ],
+                  );
+                }),
+              ),
+            ],
+          ),*/
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15,
-              vertical: 10,
-            ),
-            decoration: BoxDecoration(
-                color: Styles.boxColor,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(15),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Styles.shadowColor,
-                    blurRadius: 3,
-                    spreadRadius: 1,
-                    offset: const Offset(1, 1),
-                  )
-                ]),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Siqareti\nburaxdığınız tarix:',
-                      style: Styles.textStyle,
-                    ),
-                    Expanded(
-                      child: TextButton(
-                        onPressed: pickDateTime,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${dateTime!.day}.${dateTime!.month.toString().padLeft(2, '0')}.${dateTime!.year}',
-                                  style: Styles.numStyle2,
-                                ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  '${dateTime!.hour.toString().padLeft(2, '0')}:${dateTime!.minute.toString().padLeft(2, '0')}',
-                                  style: Styles.numStyle2,
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Divider(
-                      height: 1.5, color: Styles.primaryColor, thickness: 0.5),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Bir gündə\nçəkilən siqaret:',
-                      style: Styles.textStyle,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        initialValue: say,
-                        textInputAction: TextInputAction.next,
-                        textAlign: TextAlign.right,
-                        inputFormatters: [LengthLimitingTextInputFormatter(4)],
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          hintText: '0',
-                          hintStyle: Styles.numStyle2,
-                          border: InputBorder.none,
-                        ),
-                        style: Styles.numStyle2,
-                        onChanged: (say) => setState(() => this.say = say),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Divider(
-                      height: 1.5, color: Styles.primaryColor, thickness: 0.5),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Bir paketdə\nolan siqaret:',
-                      style: Styles.textStyle,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        initialValue: paket,
-                        textInputAction: TextInputAction.next,
-                        textAlign: TextAlign.right,
-                        inputFormatters: [LengthLimitingTextInputFormatter(4)],
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: '0',
-                          hintStyle: Styles.numStyle2,
-                        ),
-                        style: Styles.numStyle2,
-                        onChanged: (paket) =>
-                            setState(() => this.paket = paket),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Divider(
-                      height: 1.5, color: Styles.primaryColor, thickness: 0.5),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Paket qiyməti:',
-                      style: Styles.textStyle,
-                    ),
-                    Expanded(
-                      child: TextFormField(
-                        initialValue: qiymet,
-                        textInputAction: TextInputAction.done,
-                        textAlign: TextAlign.right,
-                        inputFormatters: [LengthLimitingTextInputFormatter(5)],
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: '0.0',
-                          hintStyle: Styles.numStyle2,
-                        ),
-                        style: Styles.numStyle2,
-                        onChanged: (qiymet) =>
-                            setState(() => this.qiymet = qiymet),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(vertical: 5),
-                  child: Divider(
-                      height: 1.5, color: Styles.primaryColor, thickness: 0.5),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Valyuta:',
-                      style: Styles.textStyle,
-                    ),
-                    DropdownButtonHideUnderline(
-                      child: DropdownButton<String>(
-                        value: value,
-                        icon: const Icon(null),
-                        dropdownColor: Styles.boxColor,
-                        borderRadius: BorderRadius.circular(8),
-                        hint: Text(
-                          valyuta[0],
-                          style: Styles.textStyle2
-                              .copyWith(color: Styles.valColor),
-                        ),
-                        items: valyuta.map(buildValyuta).toList(),
-                        style:
-                            Styles.textStyle2.copyWith(color: Styles.valColor),
-                        onChanged: (value) =>
-                            setState(() => this.value = value!),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () async {
-              DateTime.now().difference(dateTime!).inMinutes >= 0
-                  ? await MyBox.setTarix(dateTime!)
-                  : await MyBox.setTarix(DateTime.now());
-              int.tryParse(say)! > 0 ? await MyBox.setSay(say) : null;
-              int.tryParse(paket)! > 0 ? await MyBox.setPaket(paket) : null;
-              double.tryParse(qiymet)! >= 0
-                  ? await MyBox.setQiymet(qiymet)
-                  : null;
-              await MyBox.setValyuta(value!);
-              _showSavedToast();
-              if (!mounted) return;
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) => const BottomBar(),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(mq.width * 0.042),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: mq.width * 0.042,
+                vertical: mq.width * 0.028,
+              ),
+              decoration: BoxDecoration(
+                  color: Styles.boxColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(mq.width * 0.042),
                   ),
-                  (Route<dynamic> route) => false);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Styles.buttonColor,
-              shadowColor: Styles.shadowColor,
-              shape: const StadiumBorder(),
-              padding: const EdgeInsets.all(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Styles.shadowColor,
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      offset: const Offset(1, 1),
+                    )
+                  ]),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Siqareti buraxdığınız tarix:',
+                          style: TextStyle(
+                            color: Styles.textColor,
+                            fontSize: mq.width * 0.05,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: MaterialButton(
+                          onPressed: pickDateTime,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Flexible(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      dateFormat1.format(dateTime!),
+                                      style: TextStyle(
+                                        color: Styles.numColor,
+                                        fontSize: mq.width * 0.045,
+                                      ),
+                                    ),
+                                    SizedBox(height: mq.width * 0.009),
+                                    Text(
+                                      dateFormat2.format(dateTime!),
+                                      style: TextStyle(
+                                        color: Styles.numColor,
+                                        fontSize: mq.width * 0.045,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: mq.width * 0.0139),
+                    child: Divider(
+                        height: mq.width * 0.004,
+                        color: Styles.primaryColor,
+                        thickness: mq.width * 0.0014),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Bir gündə çəkilən siqaret:',
+                          style: TextStyle(
+                            color: Styles.textColor,
+                            fontSize: mq.width * 0.05,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          initialValue: say,
+                          textInputAction: TextInputAction.next,
+                          textAlign: TextAlign.right,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(4)
+                          ],
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            hintText: '0',
+                            hintStyle: TextStyle(
+                              color: Styles.numColor,
+                              fontSize: mq.width * 0.045,
+                            ),
+                            border: InputBorder.none,
+                          ),
+                          style: TextStyle(
+                            color: Styles.numColor,
+                            fontSize: mq.width * 0.045,
+                          ),
+                          onChanged: (say) => setState(() => this.say = say),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: mq.width * 0.0139),
+                    child: Divider(
+                        height: mq.width * 0.004,
+                        color: Styles.primaryColor,
+                        thickness: mq.width * 0.0014),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Bir paketdə olan siqaret:',
+                          style: TextStyle(
+                            color: Styles.textColor,
+                            fontSize: mq.width * 0.05,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          initialValue: paket,
+                          textInputAction: TextInputAction.next,
+                          textAlign: TextAlign.right,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(4)
+                          ],
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '0',
+                            hintStyle: TextStyle(
+                              color: Styles.numColor,
+                              fontSize: mq.width * 0.045,
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: Styles.numColor,
+                            fontSize: mq.width * 0.045,
+                          ),
+                          onChanged: (paket) =>
+                              setState(() => this.paket = paket),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: mq.width * 0.0139),
+                    child: Divider(
+                        height: mq.width * 0.004,
+                        color: Styles.primaryColor,
+                        thickness: mq.width * 0.0014),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Paket qiyməti:',
+                          style: TextStyle(
+                            color: Styles.textColor,
+                            fontSize: mq.width * 0.05,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: TextFormField(
+                          initialValue: qiymet,
+                          textInputAction: TextInputAction.done,
+                          textAlign: TextAlign.right,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(5)
+                          ],
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: '0.0',
+                            hintStyle: TextStyle(
+                              color: Styles.numColor,
+                              fontSize: mq.width * 0.045,
+                            ),
+                          ),
+                          style: TextStyle(
+                            color: Styles.numColor,
+                            fontSize: mq.width * 0.045,
+                          ),
+                          onChanged: (qiymet) =>
+                              setState(() => this.qiymet = qiymet),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: mq.width * 0.0139),
+                    child: Divider(
+                        height: mq.width * 0.004,
+                        color: Styles.primaryColor,
+                        thickness: mq.width * 0.0014),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          'Valyuta:',
+                          style: TextStyle(
+                            color: Styles.textColor,
+                            fontSize: mq.width * 0.05,
+                          ),
+                        ),
+                      ),
+                      DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: value,
+                          icon: const Icon(null),
+                          dropdownColor: Styles.boxColor,
+                          borderRadius: BorderRadius.circular(mq.width * 0.022),
+                          hint: Text(
+                            valyuta[0],
+                            style: TextStyle(
+                              color: Styles.valColor,
+                              fontSize: mq.width * 0.045,
+                            ),
+                          ),
+                          items: valyuta.map(buildValyuta).toList(),
+                          style: TextStyle(
+                            color: Styles.valColor,
+                            fontSize: mq.width * 0.045,
+                          ),
+                          onChanged: (value) =>
+                              setState(() => this.value = value!),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            child: const Text(
-              'Yadda saxla',
-              style: TextStyle(fontSize: 20),
+            SizedBox(height: mq.width * 0.055),
+            ElevatedButton(
+              onPressed: () async {
+                DateTime.now().difference(dateTime!).inMinutes >= 0
+                    ? await MyBox.setTarix(dateTime!)
+                    : await MyBox.setTarix(DateTime.now());
+                int.tryParse(say)! > 0 ? await MyBox.setSay(say) : null;
+                int.tryParse(paket)! > 0 ? await MyBox.setPaket(paket) : null;
+                double.tryParse(qiymet)! >= 0
+                    ? await MyBox.setQiymet(qiymet)
+                    : null;
+                await MyBox.setValyuta(value!);
+                _showSavedToast();
+                if (!mounted) return;
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => const BottomBar(),
+                    ),
+                    (Route<dynamic> route) => false);
+              },
+              style: ElevatedButton.styleFrom(
+                fixedSize: Size(double.maxFinite, mq.width * 0.139),
+                backgroundColor: Styles.buttonColor,
+                shadowColor: Styles.shadowColor,
+                shape: const StadiumBorder(),
+              ),
+              child: Text(
+                'Yadda saxla',
+                style: TextStyle(fontSize: mq.width * 0.055),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -345,16 +485,24 @@ class _ProfileState extends State<Profile> {
     showDialog(
         context: context,
         builder: (BuildContext context) {
+          final mq = MediaQuery.of(context).size;
+
           return AlertDialog(
             backgroundColor: Styles.primaryColor,
             title: Text(
               'Xatırlatma',
-              style: Styles.textStyle.copyWith(color: Styles.valColor),
+              style: TextStyle(
+                color: Styles.valColor,
+                fontSize: mq.width * 0.05,
+              ),
               textAlign: TextAlign.center,
             ),
             content: Text(
               'Bütün parametrlər sıfırlanacaq',
-              style: Styles.textStyle2,
+              style: TextStyle(
+                color: Styles.textColor,
+                fontSize: mq.width * 0.045,
+              ),
               textAlign: TextAlign.center,
             ),
             actions: <Widget>[
@@ -363,9 +511,9 @@ class _ProfileState extends State<Profile> {
                 children: [
                   Column(
                     children: [
-                      TextButton(
-                        onPressed: () async {
-                          await MyBox.clearAll();
+                      MaterialButton(
+                        onPressed: () {
+                          MyBox.clearAll();
                           _showClearToast();
                           if (!mounted) return;
                           Navigator.of(context).pushAndRemoveUntil(
@@ -375,25 +523,24 @@ class _ProfileState extends State<Profile> {
                               ),
                               (Route<dynamic> route) => false);
                         },
-                        style: TextButton.styleFrom(
-                          fixedSize: const Size.fromWidth(100),
-                        ),
                         child: Text(
                           'Sıfırla',
-                          style: Styles.textStyle2
-                              .copyWith(color: Styles.alertColor),
+                          style: TextStyle(
+                            color: Styles.alertColor,
+                            fontSize: mq.width * 0.045,
+                          ),
                         ),
                       ),
-                      TextButton(
+                      MaterialButton(
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
-                        style: TextButton.styleFrom(
-                            fixedSize: const Size.fromWidth(100)),
                         child: Text(
                           'Ləğv et',
-                          style: Styles.textStyle2
-                              .copyWith(color: Styles.alertColor),
+                          style: TextStyle(
+                            color: Styles.alertColor,
+                            fontSize: mq.width * 0.045,
+                          ),
                         ),
                       ),
                     ],

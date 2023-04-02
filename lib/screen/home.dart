@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:indi_tergit/api/firebase_api.dart';
 import 'package:indi_tergit/data/my_box.dart';
 import 'package:indi_tergit/utils/styles.dart';
 
@@ -18,19 +19,23 @@ class _HomeState extends State<Home> {
   String? value;
 
   DateTime? dateTime;
+  bool? isChecked;
 
   @override
   void initState() {
     super.initState();
+    FirebaseApi.getToken();
     say = MyBox.getSay() ?? '';
     paket = MyBox.getPaket() ?? '';
     qiymet = MyBox.getQiymet() ?? '';
     value = MyBox.getValyuta() ?? valyuta[0];
     dateTime = MyBox.getTarix() ?? DateTime.now();
+    isChecked = MyBox.getBildiris() ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
     int? sSay = int.tryParse(say);
     int? sPaket = int.tryParse(paket);
     double? sQiymet = double.tryParse(qiymet);
@@ -41,160 +46,98 @@ class _HomeState extends State<Home> {
             1440
         : 0;
 
-    var deqFerqi = DateTime.now().minute - dateTime!.minute;
-    var saatFerqi = DateTime.now().hour - dateTime!.hour;
-    var gunFerqi = DateTime.now().day - dateTime!.day;
-    var ayFerqi = DateTime.now().month - dateTime!.month;
-    var ilFerqi = DateTime.now().year - dateTime!.year;
-    var aydaGun =
+    final deqFerqi = DateTime.now().minute - dateTime!.minute;
+    final saatFerqi = DateTime.now().hour - dateTime!.hour;
+    final gunFerqi = DateTime.now().day - dateTime!.day;
+    final ayFerqi = DateTime.now().month - dateTime!.month;
+    final ilFerqi = DateTime.now().year - dateTime!.year;
+    final aydaGun =
         DateTime(DateTime.now().year, DateTime.now().month + 0, 0).day;
 
-    Text saat = sSay != null && deqFerqi >= 0 && saatFerqi >= 0
-        ? Text(
-            '$saatFerqi',
-            style: Styles.numStyle,
-          )
-        : sSay != null && deqFerqi >= 0 && saatFerqi < 0
-            ? Text(
-                '${saatFerqi + 24}',
-                style: Styles.numStyle,
-              )
-            : sSay != null && deqFerqi < 0 && saatFerqi > 0
-                ? Text(
-                    '${saatFerqi - 1}',
-                    style: Styles.numStyle,
-                  )
-                : sSay != null && deqFerqi < 0 && saatFerqi < 1
-                    ? Text(
-                        '${saatFerqi + 23}',
-                        style: Styles.numStyle,
-                      )
-                    : Text(
-                        '0',
-                        style: Styles.numStyle,
-                      );
+    String saat() {
+      if (sSay != null && deqFerqi >= 0 && saatFerqi >= 0) {
+        return '$saatFerqi';
+      } else if (sSay != null && deqFerqi >= 0 && saatFerqi < 0) {
+        return '${saatFerqi + 24}';
+      } else if (sSay != null && deqFerqi < 0 && saatFerqi > 0) {
+        return '${saatFerqi - 1}';
+      } else if (sSay != null && deqFerqi < 0 && saatFerqi < 1) {
+        return '${saatFerqi + 23}';
+      } else {
+        return '0';
+      }
+    }
 
-    Text gun = sSay != null && deqFerqi < 0 && saatFerqi < 1 && gunFerqi > 0
-        ? Text(
-            '${gunFerqi - 1}',
-            style: Styles.numStyle,
-          )
-        : sSay != null && deqFerqi < 0 && saatFerqi < 1 && gunFerqi < 1
-            ? Text(
-                '${gunFerqi + aydaGun - 1}',
-                style: Styles.numStyle,
-              )
-            : sSay != null && saatFerqi < 0 && gunFerqi > 0
-                ? Text(
-                    '${gunFerqi - 1}',
-                    style: Styles.numStyle,
-                  )
-                : sSay != null && saatFerqi < 0 && gunFerqi < 1
-                    ? Text(
-                        '${gunFerqi + aydaGun - 1}',
-                        style: Styles.numStyle,
-                      )
-                    : sSay != null && saatFerqi >= 0 && gunFerqi >= 0
-                        ? Text(
-                            '$gunFerqi',
-                            style: Styles.numStyle,
-                          )
-                        : sSay != null && saatFerqi >= 0 && gunFerqi < 0
-                            ? Text(
-                                '${gunFerqi + aydaGun}',
-                                style: Styles.numStyle,
-                              )
-                            : Text(
-                                '0',
-                                style: Styles.numStyle,
-                              );
+    String gun() {
+      if (sSay != null && deqFerqi < 0 && saatFerqi < 1 && gunFerqi > 0) {
+        return '${gunFerqi - 1}';
+      } else if (sSay != null &&
+          deqFerqi < 0 &&
+          saatFerqi < 1 &&
+          gunFerqi < 1) {
+        return '${gunFerqi + aydaGun - 1}';
+      } else if (sSay != null && saatFerqi < 0 && gunFerqi > 0) {
+        return '${gunFerqi - 1}';
+      } else if (sSay != null && saatFerqi < 0 && gunFerqi < 1) {
+        return '${gunFerqi + aydaGun - 1}';
+      } else if (sSay != null && saatFerqi >= 0 && gunFerqi >= 0) {
+        return '$gunFerqi';
+      } else if (sSay != null && saatFerqi >= 0 && gunFerqi < 0) {
+        return '${gunFerqi + aydaGun}';
+      } else {
+        return '0';
+      }
+    }
 
-    Text ay = sSay != null &&
-            deqFerqi < 0 &&
-            saatFerqi < 1 &&
-            gunFerqi < 1 &&
-            ayFerqi > 0
-        ? Text(
-            '${ayFerqi - 1}',
-            style: Styles.numStyle,
-          )
-        : sSay != null &&
-                deqFerqi < 0 &&
-                saatFerqi < 1 &&
-                gunFerqi < 1 &&
-                ayFerqi < 1
-            ? Text(
-                '${ayFerqi + 11}',
-                style: Styles.numStyle,
-              )
-            : sSay != null && saatFerqi < 0 && gunFerqi < 1 && ayFerqi > 0
-                ? Text(
-                    '${ayFerqi - 1}',
-                    style: Styles.numStyle,
-                  )
-                : sSay != null && saatFerqi < 0 && gunFerqi < 1 && ayFerqi < 1
-                    ? Text(
-                        '${ayFerqi + 11}',
-                        style: Styles.numStyle,
-                      )
-                    : sSay != null && gunFerqi < 0 && ayFerqi < 1
-                        ? Text(
-                            '${ayFerqi + 11}',
-                            style: Styles.numStyle,
-                          )
-                        : sSay != null && gunFerqi < 0 && ayFerqi > 0
-                            ? Text(
-                                '${ayFerqi - 1}',
-                                style: Styles.numStyle,
-                              )
-                            : sSay != null && gunFerqi >= 0 && ayFerqi >= 0
-                                ? Text(
-                                    '$ayFerqi',
-                                    style: Styles.numStyle,
-                                  )
-                                : sSay != null && gunFerqi >= 0 && ayFerqi < 0
-                                    ? Text(
-                                        '${ayFerqi + 12}',
-                                        style: Styles.numStyle,
-                                      )
-                                    : Text(
-                                        '0',
-                                        style: Styles.numStyle,
-                                      );
+    String ay() {
+      if (sSay != null &&
+          deqFerqi < 0 &&
+          saatFerqi < 1 &&
+          gunFerqi < 1 &&
+          ayFerqi > 0) {
+        return '${ayFerqi - 1}';
+      } else if (sSay != null &&
+          deqFerqi < 0 &&
+          saatFerqi < 1 &&
+          gunFerqi < 1 &&
+          ayFerqi < 1) {
+        return '${ayFerqi + 11}';
+      } else if (sSay != null && saatFerqi < 0 && gunFerqi < 1 && ayFerqi > 0) {
+        return '${ayFerqi - 1}';
+      } else if (sSay != null && saatFerqi < 0 && gunFerqi < 1 && ayFerqi < 1) {
+        return '${ayFerqi + 11}';
+      } else if (sSay != null && gunFerqi < 0 && ayFerqi < 1) {
+        return '${ayFerqi + 11}';
+      } else if (sSay != null && gunFerqi < 0 && ayFerqi > 0) {
+        return '${ayFerqi - 1}';
+      } else if (sSay != null && gunFerqi >= 0 && ayFerqi >= 0) {
+        return '$ayFerqi';
+      } else if (sSay != null && gunFerqi >= 0 && ayFerqi < 0) {
+        return '${ayFerqi + 12}';
+      } else {
+        return '0';
+      }
+    }
 
-    Text il = sSay != null &&
-            deqFerqi < 0 &&
-            saatFerqi < 1 &&
-            gunFerqi < 1 &&
-            ayFerqi < 1
-        ? Text(
-            '${ilFerqi - 1}',
-            style: Styles.numStyle,
-          )
-        : sSay != null && saatFerqi < 0 && gunFerqi < 1 && ayFerqi < 1
-            ? Text(
-                '${ilFerqi - 1}',
-                style: Styles.numStyle,
-              )
-            : sSay != null && gunFerqi < 0 && ayFerqi < 1
-                ? Text(
-                    '${ilFerqi - 1}',
-                    style: Styles.numStyle,
-                  )
-                : sSay != null && ayFerqi < 0
-                    ? Text(
-                        '${ilFerqi - 1}',
-                        style: Styles.numStyle,
-                      )
-                    : sSay != null && ayFerqi >= 0
-                        ? Text(
-                            '$ilFerqi',
-                            style: Styles.numStyle,
-                          )
-                        : Text(
-                            '0',
-                            style: Styles.numStyle,
-                          );
+    String il() {
+      if (sSay != null &&
+          deqFerqi < 0 &&
+          saatFerqi < 1 &&
+          gunFerqi < 1 &&
+          ayFerqi < 1) {
+        return '${ilFerqi - 1}';
+      } else if (sSay != null && saatFerqi < 0 && gunFerqi < 1 && ayFerqi < 1) {
+        return '${ilFerqi - 1}';
+      } else if (sSay != null && gunFerqi < 0 && ayFerqi < 1) {
+        return '${ilFerqi - 1}';
+      } else if (sSay != null && ayFerqi < 0) {
+        return '${ilFerqi - 1}';
+      } else if (sSay != null && ayFerqi >= 0) {
+        return '$ilFerqi';
+      } else {
+        return '0';
+      }
+    }
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -203,338 +146,465 @@ class _HomeState extends State<Home> {
         backgroundColor: Styles.boxColor,
         title: const Text('Hesablama'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(15),
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 25,
-            ),
-            decoration: BoxDecoration(
-                color: Styles.boxColor,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(15),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Styles.shadowColor,
-                    blurRadius: 3,
-                    spreadRadius: 1,
-                    offset: const Offset(1, 1),
-                  )
-                ]),
-            child: Column(
-              children: [
-                Text(
-                  'Siqaret çəkmirəm',
-                  style: Styles.headLine,
-                ),
-                const SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      children: [
-                        il,
-                        const SizedBox(height: 15),
-                        Text(
-                          'İl',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        ay,
-                        const SizedBox(height: 15),
-                        Text(
-                          'Ay',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        gun,
-                        const SizedBox(height: 15),
-                        Text(
-                          'Gün',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        saat,
-                        const SizedBox(height: 15),
-                        Text(
-                          'Saat',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Styles.boxColor,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(15),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Styles.shadowColor,
-                    blurRadius: 3,
-                    spreadRadius: 1,
-                    offset: const Offset(1, 1),
-                  )
-                ]),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Styles.boxColor,
-                child: Icon(
-                  Styles.quitIcon,
-                  color: Styles.iconColor,
-                  size: 30,
-                ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(mq.width * 0.042),
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: mq.width * 0.055,
+                vertical: mq.width * 0.07,
               ),
-              title: Text(
-                'İmtina edilən siqaret',
-                style: Styles.textStyle,
-              ),
-              subtitle: say != ''
-                  ? Text(
-                      '${imtinaSay.truncate()}',
-                      style: TextStyle(color: Styles.numColor),
+              decoration: BoxDecoration(
+                  color: Styles.boxColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(mq.width * 0.042),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Styles.shadowColor,
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      offset: const Offset(1, 1),
                     )
-                  : Text(
-                      '0',
-                      style: TextStyle(color: Styles.numColor),
+                  ]),
+              child: Column(
+                children: [
+                  Text(
+                    'Siqaret çəkmirəm',
+                    style: TextStyle(
+                      color: Styles.textColor,
+                      fontSize: mq.width * 0.055,
                     ),
-            ),
-          ),
-          const SizedBox(height: 15),
-          Container(
-            decoration: BoxDecoration(
-                color: Styles.boxColor,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(15),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Styles.shadowColor,
-                    blurRadius: 3,
-                    spreadRadius: 1,
-                    offset: const Offset(1, 1),
-                  )
-                ]),
-            child: ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Styles.boxColor,
-                child: value == valyuta[0]
-                    ? Text(
-                        '₼',
-                        style: TextStyle(
-                          color: Styles.iconColor,
-                          fontSize: 34,
-                        ),
-                      )
-                    : value == valyuta[1]
-                        ? Text(
-                            '\$',
+                  ),
+                  SizedBox(height: mq.width * 0.07),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          Text(
+                            il(),
                             style: TextStyle(
-                              color: Styles.iconColor,
-                              fontSize: 34,
-                            ),
-                          )
-                        : Text(
-                            '€',
-                            style: TextStyle(
-                              color: Styles.iconColor,
-                              fontSize: 34,
+                              color: Styles.numColor,
+                              fontSize: mq.width * 0.05,
                             ),
                           ),
+                          SizedBox(height: mq.width * 0.042),
+                          Text(
+                            'İl',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            ay(),
+                            style: TextStyle(
+                              color: Styles.numColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                          SizedBox(height: mq.width * 0.042),
+                          Text(
+                            'Ay',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            gun(),
+                            style: TextStyle(
+                              color: Styles.numColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                          SizedBox(height: mq.width * 0.042),
+                          Text(
+                            'Gün',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Text(
+                            saat(),
+                            style: TextStyle(
+                              color: Styles.numColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                          SizedBox(height: mq.width * 0.042),
+                          Text(
+                            'Saat',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
               ),
-              title: Text(
-                'Pula qənaət',
-                style: Styles.textStyle,
-              ),
-              subtitle: qiymet != '' &&
-                      qiymet != '0' &&
-                      say != '' &&
-                      say != '0' &&
-                      paket != '' &&
-                      paket != '0'
-                  ? Text(
-                      ((sQiymet! / sPaket!) * imtinaSay.truncate())
-                          .toStringAsFixed(2),
-                      style: TextStyle(color: Styles.numColor),
+            ),
+            SizedBox(height: mq.width * 0.042),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: mq.width * 0.01),
+              decoration: BoxDecoration(
+                  color: Styles.boxColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(mq.width * 0.042),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Styles.shadowColor,
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      offset: const Offset(1, 1),
                     )
-                  : Text(
-                      '0.0',
-                      style: TextStyle(color: Styles.numColor),
-                    ),
-            ),
-          ),
-          const SizedBox(height: 15),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 25,
-            ),
-            decoration: BoxDecoration(
-                color: Styles.boxColor,
-                borderRadius: const BorderRadius.all(
-                  Radius.circular(15),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Styles.shadowColor,
-                    blurRadius: 3,
-                    spreadRadius: 1,
-                    offset: const Offset(1, 1),
-                  )
-                ]),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  ]),
+              child: Padding(
+                padding: EdgeInsets.all(mq.width * 0.042),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Tooltip(
-                      message: 'Hər siqaret insan ömründən 11 dəqiqə alır',
-                      triggerMode: TooltipTriggerMode.tap,
-                      showDuration: const Duration(seconds: 2),
+                    CircleAvatar(
+                      backgroundColor: Styles.boxColor,
                       child: Icon(
-                        Styles.infoIcon,
+                        Styles.quitIcon,
                         color: Styles.iconColor,
-                        size: 25,
+                        size: mq.width * 0.083,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Text(
-                      'Qazanılan zaman',
-                      style: Styles.headLine,
-                    ),
+                    SizedBox(width: mq.width * 0.042),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'İmtina edilən siqaret',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                          SizedBox(height: mq.width * 0.0139),
+                          say != ''
+                              ? Text(
+                                  '${imtinaSay.truncate()}',
+                                  style: TextStyle(color: Styles.numColor),
+                                )
+                              : Text(
+                                  '0',
+                                  style: TextStyle(color: Styles.numColor),
+                                ),
+                        ],
+                      ),
+                    )
                   ],
                 ),
-                const SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Column(
-                      children: [
-                        say != ''
-                            ? Text(
-                                '${(((imtinaSay.truncate() * 11) / 1440).truncate() / 365).truncate()}',
-                                style: Styles.numStyle,
-                              )
-                            : Text(
-                                '0',
-                                style: Styles.numStyle,
-                              ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'İl',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        say != ''
-                            ? Text(
-                                '${((((imtinaSay.truncate() * 11) / 1440).truncate()).remainder(365) / 30).truncate()}',
-                                style: Styles.numStyle,
-                              )
-                            : Text(
-                                '0',
-                                style: Styles.numStyle,
-                              ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Ay',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        say != ''
-                            ? Text(
-                                '${(((imtinaSay.truncate() * 11) / 1440).truncate()).remainder(365).remainder(30).truncate()}',
-                                style: Styles.numStyle,
-                              )
-                            : Text(
-                                '0',
-                                style: Styles.numStyle,
-                              ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Gün',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(15),
-                  child: Divider(
-                    height: 1.5,
-                    color: Styles.primaryColor,
-                    thickness: 0.5,
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Column(
-                      children: [
-                        say != ''
-                            ? Text(
-                                '${(((imtinaSay.truncate() * 11).remainder(1440)) / 60).truncate()}',
-                                style: Styles.numStyle,
-                              )
-                            : Text(
-                                '0',
-                                style: Styles.numStyle,
-                              ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Saat',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        say != ''
-                            ? Text(
-                                '${((imtinaSay.truncate() * 11).remainder(1440)).remainder(60).truncate()}',
-                                style: Styles.numStyle,
-                              )
-                            : Text(
-                                '0',
-                                style: Styles.numStyle,
-                              ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Dəqiqə',
-                          style: Styles.textStyle,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+            SizedBox(height: mq.width * 0.042),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: mq.width * 0.01),
+              decoration: BoxDecoration(
+                  color: Styles.boxColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(mq.width * 0.042),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Styles.shadowColor,
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      offset: const Offset(1, 1),
+                    )
+                  ]),
+              child: Padding(
+                padding: EdgeInsets.all(mq.width * 0.042),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Styles.boxColor,
+                      child: value == valyuta[0]
+                          ? Text(
+                              '₼',
+                              style: TextStyle(
+                                color: Styles.iconColor,
+                                fontSize: mq.width * 0.094,
+                              ),
+                            )
+                          : value == valyuta[1]
+                              ? Text(
+                                  '\$',
+                                  style: TextStyle(
+                                    color: Styles.iconColor,
+                                    fontSize: mq.width * 0.094,
+                                  ),
+                                )
+                              : Text(
+                                  '€',
+                                  style: TextStyle(
+                                    color: Styles.iconColor,
+                                    fontSize: mq.width * 0.094,
+                                  ),
+                                ),
+                    ),
+                    SizedBox(width: mq.width * 0.042),
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pula qənaət',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                          SizedBox(height: mq.width * 0.0139),
+                          qiymet != '' &&
+                                  qiymet != '0' &&
+                                  say != '' &&
+                                  say != '0' &&
+                                  paket != '' &&
+                                  paket != '0'
+                              ? Text(
+                                  ((sQiymet! / sPaket!) * imtinaSay.truncate())
+                                      .toStringAsFixed(2),
+                                  style: TextStyle(color: Styles.numColor),
+                                )
+                              : Text(
+                                  '0.0',
+                                  style: TextStyle(color: Styles.numColor),
+                                ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: mq.width * 0.042),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: mq.width * 0.055,
+                vertical: mq.width * 0.07,
+              ),
+              decoration: BoxDecoration(
+                  color: Styles.boxColor,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(mq.width * 0.042),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Styles.shadowColor,
+                      blurRadius: 3,
+                      spreadRadius: 1,
+                      offset: const Offset(1, 1),
+                    )
+                  ]),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Tooltip(
+                        message: 'Hər siqaret insan ömründən 11 dəqiqə alır',
+                        triggerMode: TooltipTriggerMode.tap,
+                        showDuration: const Duration(seconds: 2),
+                        child: Icon(
+                          Styles.infoIcon,
+                          color: Styles.iconColor,
+                          size: mq.width * 0.07,
+                        ),
+                      ),
+                      SizedBox(width: mq.width * 0.028),
+                      Text(
+                        'Qazanılan zaman',
+                        style: TextStyle(
+                          color: Styles.textColor,
+                          fontSize: mq.width * 0.055,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: mq.width * 0.07),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          say != ''
+                              ? Text(
+                                  '${(((imtinaSay.truncate() * 11) / 1440).truncate() / 365).truncate()}',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                )
+                              : Text(
+                                  '0',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                ),
+                          SizedBox(height: mq.width * 0.028),
+                          Text(
+                            'İl',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          say != ''
+                              ? Text(
+                                  '${((((imtinaSay.truncate() * 11) / 1440).truncate()).remainder(365) / 30).truncate()}',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                )
+                              : Text(
+                                  '0',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                ),
+                          SizedBox(height: mq.width * 0.028),
+                          Text(
+                            'Ay',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          say != ''
+                              ? Text(
+                                  '${(((imtinaSay.truncate() * 11) / 1440).truncate()).remainder(365).remainder(30).truncate()}',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                )
+                              : Text(
+                                  '0',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                ),
+                          SizedBox(height: mq.width * 0.028),
+                          Text(
+                            'Gün',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(mq.width * 0.042),
+                    child: Divider(
+                      height: mq.width * 0.004,
+                      color: Styles.primaryColor,
+                      thickness: mq.width * 0.0014,
+                    ),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          say != ''
+                              ? Text(
+                                  '${(((imtinaSay.truncate() * 11).remainder(1440)) / 60).truncate()}',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                )
+                              : Text(
+                                  '0',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                ),
+                          SizedBox(height: mq.width * 0.028),
+                          Text(
+                            'Saat',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          say != ''
+                              ? Text(
+                                  '${((imtinaSay.truncate() * 11).remainder(1440)).remainder(60).truncate()}',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                )
+                              : Text(
+                                  '0',
+                                  style: TextStyle(
+                                    color: Styles.numColor,
+                                    fontSize: mq.width * 0.05,
+                                  ),
+                                ),
+                          SizedBox(height: mq.width * 0.028),
+                          Text(
+                            'Dəqiqə',
+                            style: TextStyle(
+                              color: Styles.textColor,
+                              fontSize: mq.width * 0.05,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

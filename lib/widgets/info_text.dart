@@ -8,11 +8,13 @@ class InfoText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context).size;
+
     return Container(
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(mq.width * 0.042),
       decoration: BoxDecoration(
           color: Styles.shadowColor,
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(mq.width * 0.042),
           boxShadow: [
             BoxShadow(
               color: Styles.shadowColor,

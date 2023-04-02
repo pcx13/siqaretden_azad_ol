@@ -8,6 +8,7 @@ class MyBox {
   static const _keyPaket = 'siqiPaket';
   static const _keyQiymet = 'siqiQiymet';
   static const _keyValyuta = 'siqiValyuta';
+  static const _keyBildiris = 'bildiris';
 
   static Future setTarix(DateTime siqiTarix) async {
     final tarix = siqiTarix.toIso8601String();
@@ -39,5 +40,19 @@ class MyBox {
 
   static String? getValyuta() => _myBox.get(_keyValyuta);
 
-  static Future clearAll() async => await _myBox.clear();
+  static Future setBildiris(bool bildiris) async =>
+      await _myBox.put(_keyBildiris, bildiris);
+
+  static bool? getBildiris() => _myBox.get(_keyBildiris);
+
+  static List<Future> clearAll() {
+    final functions = <Future>[
+      _myBox.delete(_keyPaket),
+      _myBox.delete(_keyTarix),
+      _myBox.delete(_keySay),
+      _myBox.delete(_keyQiymet),
+      _myBox.delete(_keyValyuta),
+    ];
+    return functions;
+  }
 }
